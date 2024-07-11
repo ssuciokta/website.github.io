@@ -1,0 +1,134 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\Menu;
+use Illuminate\Http\Request;
+
+class MenuController extends Controller
+{
+    /**
+     * index
+     *
+     * @return void
+     */
+    public function index()
+    {
+        //get all menu from Models
+        $menus = Menu::latest()->get();
+
+        //return view with data
+        return view('menu', compact('menus'));
+    }
+        /**
+     * store
+     *
+     * @param  mixed $request
+     * @return void
+     */
+    public function store(Request $request)
+    {
+        //define validation rules
+        $validator = Validator::make($request->all(), [
+            'nama'     => 'required',
+            'deskripsi'   => 'required',
+            'image'   => 'required',
+            'harga'   => 'required',
+
+        ]);
+
+        //check if validation fails
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422);
+        }
+
+        //create menu
+        $menu = Menu::create([
+            'nama'     => $request->nama, 
+            'deskripsi'   => $request->deskripsi,
+            'image'   => $request->image,
+            'harga'   => $request->harga
+            
+        ]);
+
+        //return response
+        return response()->json([
+            'success' => true,
+            'message' => 'Data Berhasil Disimpan!',
+            'data'    => $menu  
+        ]);
+    }
+        /**
+     * show
+     *
+     * @param  mixed $menu
+     * @return void
+     */
+    public function show(Menu $menu)
+    {
+        //return response
+        return response()->json([
+            'success' => true,
+            'message' => 'Detail Data Menu',
+            'data'    => $menu  
+        ]); 
+    }
+    
+    /**
+     * update
+     *
+     * @param  mixed $request
+     * @param  mixed $menu
+     * @return void
+     */
+    public function update(Request $request, Menu $menu)
+    {
+        //define validation rules
+        $validator = Validator::make($request->all(), [
+            'nama'     => 'required',
+            'deskripsi'   => 'required',
+            'image'   => 'required',
+            'harga'   => 'required',
+
+        ]);
+
+        //check if validation fails
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422);
+        }
+
+        //create menu
+        $menu->update([
+            'nama'     => $request->nama, 
+            'deskripsi'   => $request->deskripsi,
+            'image'   => $request->image,
+            'harga'   => $request->harga
+
+        ]);
+
+        //return response
+        return response()->json([
+            'success' => true,
+            'message' => 'Data Berhasil Diudapte!',
+            'data'    => $menu  
+        ]);
+    }
+    /**
+     * destroy
+     *
+     * @param  mixed $id
+     * @return void
+     */
+    public function destroy($id)
+    {
+        //delete menu by ID
+        Menu::where('id', $id)->delete();
+
+        //return response
+        return response()->json([
+            'success' => true,
+            'message' => 'Data Menu Berhasil Dihapus!.',
+        ]); 
+    }
+}    
+    
